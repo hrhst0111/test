@@ -19,18 +19,27 @@
      
         function loginWithKakao() {
           Kakao.Auth.login({
-            redirectUri: 'http://127.0.0.1:5500/test2.html',
               scope: 'profile_nickname, profile_image, account_email, gender, age_range', //추가항목 동의받기
        
       success: function(authObj) { //로그인 성공 시 토큰을 받을 콜백 함수
-        console.log(authObj); //액세스 토큰 리프레쉬 토큰 만료기한 등 띄움
+        console.log('로그인 성공'+authObj); //액세스 토큰 리프레쉬 토큰 만료기한 등 띄움
           
-        Kakao.API.request({
-    url: '/v2/user/scopes', //사용자 정보 가져오기
-    success: res => {
-        const kakao_account = res.kakao_account;
-        console.log(kakao_account);
-    } 
+        Kakao.API.request({ //사용자 정보 가져오기
+            url: '/v2/user/me',
+            data: {
+        property_keys: ["kakao_account.email","kakao_account.gender", "kakao_account.profile.nickname", "kakao_account.profile.image", "kakao_account.age_range"]
+    },
+    success: function(response) {
+        console.log(response);
+    },
+            url: '/v2/user/scopes', //동의내역 정보 확인(콘솔창)
+            data: {
+        scopes: ["account_email","gender", "profile_nickname", "profile_image", "age_range"]
+    },
+    success: function(response) {
+        console.log(response);
+    }
+            
     
     /*function(authObj) {
         console.log(authObj); 동의한 정보들 띄워줌
