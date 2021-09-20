@@ -5,6 +5,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>로그인 화면</title>
+    <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+    Kakao.init('b9e85c6fb26beeac34aa685ec3d7e0a4');
 </head>
 <body>
     <a href="javascript:loginWithKakao()">
@@ -12,10 +14,8 @@
           src="//k.kakaocdn.net/14/dn/btqCn0WEmI3/nijroPfbpCa4at5EIsjyf0/o.jpg"
           width="222"
         />
-      </a>
-      <script src="https://developers.kakao.com/sdk/js/kakao.js"></script> 
+      </a> 
       <script type="text/javascript">
-       Kakao.init('b9e85c6fb26beeac34aa685ec3d7e0a4');
      
         function loginWithKakao() {
           Kakao.Auth.login({
