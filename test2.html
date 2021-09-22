@@ -1,54 +1,47 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>로그인 화면</title>
     <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
-    Kakao.init('b9e85c6fb26beeac34aa685ec3d7e0a4');
+    <script>Kakao.init('b9e85c6fb26beeac34aa685ec3d7e0a4');</script>
 </head>
+
 <body>
     <a href="javascript:loginWithKakao()">
-        <img
-          src="//k.kakaocdn.net/14/dn/btqCn0WEmI3/nijroPfbpCa4at5EIsjyf0/o.jpg"
-          width="222"
-        />
-      </a> 
-      <script type="text/javascript">
-     
+        <img src="//k.kakaocdn.net/14/dn/btqCn0WEmI3/nijroPfbpCa4at5EIsjyf0/o.jpg" width="222" />
+    </a>
+    <script type="text/javascript">
         function loginWithKakao() {
-          Kakao.Auth.login({
-              scope: 'profile_nickname, profile_image, account_email, gender, age_range', //추가항목 동의받기
-       
-      success: function(authObj) { //로그인 성공 시 토큰을 받을 콜백 함수
-        console.log('로그인 성공'+authObj); //액세스 토큰 리프레쉬 토큰 만료기한 등 띄움
-          
-        Kakao.API.request({ //사용자 정보 가져오기
+            Kakao.Auth.authorize({
+                redirectUri: 'http://127.0.0.1:5500/test3.html', //인가코드 받음
+
+                curl - v - X POST "https://kauth.kakao.com/oauth/token" \
+                -H "Content-Type: application/x-www-form-urlencoded" \
+                -d "grant_type=authorization_code" \
+                -d "client_id=b8ff50a7badba4cf7e494b558a2dc76e" \
+                --data - urlencode "redirect_uri=http://127.0.0.1:5500/test3.html" \
+                -d "code={AUTHORIZE_CODE}"
+
+                scope: 'account_email,gender'  //추가 동의 항목으로 계정 이메일, 성별 요구
+            });
+        Kakao.Auth.setAccessToken(ACCESS_TOKEN);
+
+        Kakao.API.request({
             url: '/v2/user/me',
-            data: {
-        property_keys: ["kakao_account.email","kakao_account.gender", "kakao_account.profile.nickname", "kakao_account.profile.image", "kakao_account.age_range"]
-    },
-    success: function(response) {
-        console.log(response);
-    },
-            url: '/v2/user/scopes', //동의내역 정보 확인(콘솔창)
-            data: {
-        scopes: ["account_email","gender", "profile_nickname", "profile_image", "age_range"]
-    },
-    success: function(response) {
-        console.log(response);
-    }
-            
-    
-    /*function(authObj) {
-        console.log(authObj); 동의한 정보들 띄워줌
-    }*/
-});
-    }
-    
-});
-  }   //해야할 것: 연결 끊기 및 로그아웃 구현하기
-</script>
+            success: function (response) {
+                console.log(response);
+            },
+            fail: function (error) {
+                console.log(error);
+            }
+        }); //사용자 정보 가져오기(일단 data 안 쓰고 해보고 아무것도 안나오면 써보기)
+        
+
+    </script>
 </body>
+
 </html>
