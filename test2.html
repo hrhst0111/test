@@ -1,47 +1,61 @@
 <!DOCTYPE html>
 <html lang="ko">
-
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>로그인 화면</title>
-    <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
-    <script>Kakao.init('b9e85c6fb26beeac34aa685ec3d7e0a4');</script>
-</head>
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+    <script> Kakao.init('b9e85c6fb26beeac34aa685ec3d7e0a4'); </script>
+</head>
 <body>
-    <a href="javascript:loginWithKakao()">
+    <a id="custom-login-btn" href="javascript:loginWithKakao()">
         <img src="//k.kakaocdn.net/14/dn/btqCn0WEmI3/nijroPfbpCa4at5EIsjyf0/o.jpg" width="222" />
     </a>
+    <p id="token-result"></p>
+
     <script type="text/javascript">
+
         function loginWithKakao() {
             Kakao.Auth.authorize({
-                redirectUri: 'http://127.0.0.1:5500/test3.html', //인가코드 받음
+                redirectUri: 'http://127.0.0.1:5500/test3.html',
+                scope: 'account_email, gender, age_range', //추가 항목 동의 받기
+            }); //인가코드 받아서 리다이렉트 쪽으로 보내주기
+        }
 
-                curl - v - X POST "https://kauth.kakao.com/oauth/token" \
-                -H "Content-Type: application/x-www-form-urlencoded" \
-                -d "grant_type=authorization_code" \
-                -d "client_id=b8ff50a7badba4cf7e494b558a2dc76e" \
-                --data - urlencode "redirect_uri=http://127.0.0.1:5500/test3.html" \
-                -d "code={AUTHORIZE_CODE}"
+        function getSearchParams(k) {
+            var p = {};
+            location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (s, k, v) { p[k] = v })
+            return k ? p[k] : p;
+        }
 
-                scope: 'account_email,gender'  //추가 동의 항목으로 계정 이메일, 성별 요구
-            });
-        Kakao.Auth.setAccessToken(ACCESS_TOKEN);
+        $(document).ready(function () {
 
-        Kakao.API.request({
-            url: '/v2/user/me',
-            success: function (response) {
-                console.log(response);
-            },
-            fail: function (error) {
-                console.log(error);
+            var codeTest = getSearchParams("code");
+            
+            if (codeTest != null && codeTest != undefined) {
+                $.ajax({
+                    type: "POST",
+                    url: "https://kauth.kakao.com/oauth/token",
+                    header: {
+                        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"
+                    },
+                    data: { grant_type: "authorization_code", client_id: "b9e85c6fb26beeac34aa685ec3d7e0a4", redirect_uri: "http://127.0.0.1:5500/test3.html", code: codeTest },
+                    success: function (data, textStatus) {
+                        console.log(data);
+                        console.log(data.access_token);
+                        alert("토큰 -> " + data.access_token);
+                    },
+                    error: function (request, status, error) {
+                        alert("code:" + request.status + "\r\n" + "message:" + request.responseText + "\r\n" + "error:" + error);
+                    }
+                });
             }
-        }); //사용자 정보 가져오기(일단 data 안 쓰고 해보고 아무것도 안나오면 써보기)
+        }); //토큰 받아서 콘솔창에 정보 띄우기까지 성공
+
         
 
     </script>
 </body>
-
 </html>
