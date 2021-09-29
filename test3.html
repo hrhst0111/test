@@ -1,0 +1,64 @@
+   <!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+    <script> Kakao.init('b9e85c6fb26beeac34aa685ec3d7e0a4'); </script>
+</head>
+<body>
+    성공
+    <script type="text/javascript">
+
+        function loginWithKakao() {
+            Kakao.Auth.authorize({
+                redirectUri: 'http://127.0.0.1:5500/test3.html',
+                scope: 'account_email, gender, age_range', //추가 항목 동의 받기
+                success: function (response) {
+                    console.log(response);
+                },
+                fail: function (error) {
+                    console.log(error);
+                }
+            }); //인가코드 받아서 리다이렉트 쪽으로 보내주기
+        }
+
+        function getSearchParams(k) {
+            var p = {};
+            location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (s, k, v) { p[k] = v })
+            return k ? p[k] : p;
+        }
+
+        $(document).ready(function () {
+
+            var codeTest = getSearchParams("code");
+            
+            if (codeTest != null && codeTest != undefined) {
+                $.ajax({
+                    type: "POST",
+                    url: "https://kauth.kakao.com/oauth/token",
+                    header: {
+                        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"
+                    },
+                    data: { grant_type: "authorization_code", client_id: "b9e85c6fb26beeac34aa685ec3d7e0a4", redirect_uri: "http://127.0.0.1:5500/test3.html", code: codeTest },
+                    success: function (data, textStatus) {
+                        console.log(data);
+                        console.log(data.access_token);
+                        alert("토큰 -> " + data.access_token);
+                    },
+                    error: function (request, status, error) {
+                        alert("code:" + request.status + "\r\n" + "message:" + request.responseText + "\r\n" + "error:" + error);
+                    }
+                });
+            }
+        });
+        
+
+    </script>
+</body>
+</html>
+</body>
+</html>
