@@ -24,6 +24,15 @@
                     console.log(error);
                 }
             }); //인가코드 받아서 리다이렉트 쪽으로 보내주기
+           Kakao.API.request({
+                    url: '/v2/user/me',
+                    success: function (response) {
+                        console.log(response);
+                    },
+                    fail: function (error) {
+                        console.log(error);
+                    }
+                });
         }
 
         function getSearchParams(k) {
